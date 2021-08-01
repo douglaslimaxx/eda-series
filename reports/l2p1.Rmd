@@ -40,4 +40,25 @@ kora = all_series %>%
     filter(series_name == "Avatar: A Lenda de Korra")
 ```
 
+```{r}
+aang %>% 
+  ggplot(aes(x = season_ep, y = UserRating)) +
+  facet_wrap(~ season, ncol = 1)+ 
+  geom_line()
+```
+
+```{r}
+kora %>% 
+  ggplot(aes(x = season_ep, y = UserRating)) +
+  facet_wrap(~ season, ncol = 1)+ 
+  geom_line()
+```
+
+## Possíveis Perguntas
+
+A lenda De Aang foi melhor avaliada que a lenda de Kora?
+Qual a temporada das duas séries foi melhor avaliada?
+Existem alguma correlação entre as avaliações da primeira  e última temporada de cada séries?
+E Existe correção entre as duas séries em relação a avaliação da primeira e última temporada?
+
 
