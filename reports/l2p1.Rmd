@@ -1,0 +1,43 @@
+---
+title: "EDA Stranger Things"
+output:
+  html_notebook:
+    toc: yes
+    toc_float: yes
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_float: yes
+---
+
+```{r setup, echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(here)
+theme_set(theme_bw())
+```
+
+
+```{r}
+all_series = read_csv(here("data/series_from_imdb.csv.zip"), 
+                      col_types = "ccdcdcdddddddddddd") 
+
+glimpse(all_series)
+
+```
+
+```{r}
+all_series %>% 
+    count(series_name)
+```
+
+```{r}
+aang = all_series %>% 
+    filter(series_name == "Avatar: A Lenda de Aang")
+```
+
+```{r}
+kora = all_series %>% 
+    filter(series_name == "Avatar: A Lenda de Korra")
+```
+
+
