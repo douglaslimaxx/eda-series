@@ -29,22 +29,30 @@ glimpse(all_series)
 all_series %>% 
     count(series_name)
 ```
+## Possíveis Perguntas
+
+A lenda De Aang foi melhor avaliada que a lenda de Kora?
+Qual a temporada foi mais avaliada das duas séries?
+Existem alguma correlação entre as avaliações da primeira e última temporada de cada séries?
+
 
 ```{r}
 aang = all_series %>% 
-    filter(series_name == "Avatar: A Lenda de Aang")
+    filter(series_name == "Avatar: A Lenda de Aang", season > 0)
 ```
 
 ```{r}
-kora = all_series %>% 
+korra = all_series %>% 
     filter(series_name == "Avatar: A Lenda de Korra")
 ```
+
+## A lenda De Aang foi melhor avaliada que a lenda de Kora?
 
 ```{r}
 aang %>% 
   ggplot(aes(x = season_ep, y = UserRating)) +
   facet_wrap(~ season, ncol = 1)+ 
-  geom_line()
+  geom_line() 
 ```
 
 ```{r}
@@ -54,11 +62,132 @@ kora %>%
   geom_line()
 ```
 
-## Possíveis Perguntas
+```{r}
+media_aang = aang %>% 
+  group_by(season) %>% 
+  summarise(media = mean(UserRating)) %>% 
+  mutate(serie = "A Lenda de Aang")
+```
 
-A lenda De Aang foi melhor avaliada que a lenda de Kora?
-Qual a temporada das duas séries foi melhor avaliada?
-Existem alguma correlação entre as avaliações da primeira  e última temporada de cada séries?
-E Existe correção entre as duas séries em relação a avaliação da primeira e última temporada?
+```{r}
+media_korra = korra %>% 
+  group_by(season) %>% 
+  summarise(media = mean(UserRating)) %>% 
+  mutate(serie = "A Lenda de Korra")
+```
+
+```{r}
+medias = rbind(media_aang, media_korra)
+```
+
+```{r}
+ggplot(medias, aes(x = season, y = media, fill = serie)) +
+  geom_col(position = "dodge", color = "black") +
+  scale_fill_manual(values = c("coral", "steelblue"))
+```
+
+## Qual temporada foi mais avaliada de cada série?
+
+```{r}
+aang %>% 
+  ggplot(aes(x = series_ep, y = UserVotes, color = season)) +
+  geom_line()
+```
+
+```{r}
+korra %>% 
+  ggplot(aes(x = series_ep, y = UserVotes, color = season)) +
+  geom_line()
+```
+
+```{r}
+max_aang = aang %>% 
+  group_by(season) %>% 
+  summarise(votes = max(UserVotes),
+            ep = list(season_ep[UserVotes == votes])) %>% 
+  mutate(label = "max")
+
+min_aang = aang %>% 
+  group_by(season) %>% 
+  summarise(votes = min(UserVotes),
+            ep = list(season_ep[UserVotes == votes])) %>% 
+  mutate(label = "min")
+
+amplitude_aang = rbind(min_aang, max_aang)
+```
 
 
+```{r}
+ggplot(amplitude_aang, aes(x = season, y = votes, fill = label, label = ep)) +
+  geom_col(position = "dodge", color = "black", inherit.aes = TRUE) +
+  geom_text(nudge_x = 0.045, nudge_y= 100) +
+  scale_fill_manual(values = c("coral", "steelblue"))
+```
+
+
+```{r}
+max_korra = korra %>% 
+  group_by(season) %>% 
+  summarise(votes = max(UserVotes),
+            ep = list(season_ep[UserVotes == votes])) %>% 
+  mutate(label = "max")
+
+min_korra = korra %>% 
+  group_by(season) %>% 
+  summarise(votes = min(UserVotes),
+            ep = list(season_ep[UserVotes == votes])) %>% 
+  mutate(label = "min")
+
+amplitude_korra = rbind(min_korra, max_korra)
+```
+
+
+```{r}
+ggplot(amplitude_korra, aes(x = season, y = votes, fill = label, label = ep)) +
+  geom_col(position = "dodge", color = "black", inherit.aes = TRUE) +
+  geom_text(nudge_x = 0.1, nudge_y= 70) +
+  scale_fill_manual(values = c("black", "steelblue"))
+```
+
+## Existem alguma correlação entre as avaliações da primeira e última temporada de cada séries?
+
+
+```{r}
+primeira_aang = aang %>% 
+  filter(season == 1)
+
+ultima_aang = aang %>% 
+  filter(season == 3)
+
+```
+
+```{r}
+primeira_aang %>% 
+    ggplot(aes(x = UserRating, y = ultima_aang$UserRating)) +
+    geom_point( color = "steelblue")
+```
+
+```{r}
+primeira_aang %>% 
+    summarise(correlacao = cor(UserRating, ultima_aang$UserRating, method = "pearson"))
+```
+
+```{r}
+primeira_korra = korra %>% 
+  filter(season == 1)
+
+ultima_korra = korra %>% 
+  filter(season == 3, season_ep != 7)
+
+```
+
+```{r}
+primeira_korra %>% 
+    ggplot(aes(x = UserRating, y = ultima_korra$UserRating)) +
+    geom_point( color = "steelblue")
+```
+
+```{r}
+primeira_korra %>% 
+    summarise(correlacao = cor(UserRating, ultima_korra$UserRating, method = "pearson"))
+```
