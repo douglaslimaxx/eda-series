@@ -19,64 +19,46 @@ theme_set(theme_bw())
 
 ```{r}
 all_series = read_csv(here("data/series_from_imdb.csv.zip"), 
-                      col_types = "ccdcdcdddddddddddd") 
+                      col_types = "ccdcdcdddddddddddd")
 
-glimpse(all_series)
-
-```
-
-```{r}
-all_series %>% 
-    count(series_name)
-```
-## Possíveis Perguntas
-
-A lenda De Aang foi melhor avaliada que a lenda de Kora?
-Qual a temporada foi mais avaliada das duas séries?
-Existem alguma correlação entre as avaliações da primeira e última temporada de cada séries?
-
-
-```{r}
 aang = all_series %>% 
     filter(series_name == "Avatar: A Lenda de Aang", season > 0)
-```
 
-```{r}
 korra = all_series %>% 
     filter(series_name == "Avatar: A Lenda de Korra")
 ```
 
-## A lenda De Aang foi melhor avaliada que a lenda de Kora?
+## A lenda De Aang foi melhor avaliada que A lenda de Korra?
 
 ```{r}
 aang %>% 
   ggplot(aes(x = season_ep, y = UserRating)) +
   facet_wrap(~ season, ncol = 1)+ 
-  geom_line() 
+  geom_line() +
+  ggtitle(aang$series_name)
 ```
 
 ```{r}
-kora %>% 
+korra %>% 
   ggplot(aes(x = season_ep, y = UserRating)) +
   facet_wrap(~ season, ncol = 1)+ 
-  geom_line()
+  geom_line() +
+  ggtitle(korra$series_name)
 ```
+
+A partir das visualizações acima parece que A lenda de Aang possui uma variação maior de notas ao longo das temporadas. Já A lenda de Korra tende a manter ao longo das temporadas.
 
 ```{r}
 media_aang = aang %>% 
   group_by(season) %>% 
   summarise(media = mean(UserRating)) %>% 
   mutate(serie = "A Lenda de Aang")
-```
 
-```{r}
 media_korra = korra %>% 
   group_by(season) %>% 
   summarise(media = mean(UserRating)) %>% 
   mutate(serie = "A Lenda de Korra")
-```
 
-```{r}
 medias = rbind(media_aang, media_korra)
 ```
 
@@ -86,19 +68,25 @@ ggplot(medias, aes(x = season, y = media, fill = serie)) +
   scale_fill_manual(values = c("coral", "steelblue"))
 ```
 
+A partir desta visualização podemos ver que apesar das diferenças de variações nas notas de cada série, ela possuem uma média de notas bem parecida. Podemos concluir que não há nenhuma que se destaque mais nas avaliações, são avaliadas da mesma forma e até mesmo entre as temporadas há uma média de notas parecida.
+
 ## Qual temporada foi mais avaliada de cada série?
 
 ```{r}
 aang %>% 
   ggplot(aes(x = series_ep, y = UserVotes, color = season)) +
-  geom_line()
+  geom_line() +
+  ggtitle(aang$series_name)
 ```
 
 ```{r}
 korra %>% 
   ggplot(aes(x = series_ep, y = UserVotes, color = season)) +
-  geom_line()
+  geom_line() +
+  ggtitle(korra$series_name)
 ```
+
+Analisando a visualização de A lenda de Aang podemos notar que as temporadas tendem a manter uma constância no número de avaliações, tendo um grande pico no final da última temporada. Já em A lenda de Korra podemos notar que durante as temporadas há vários picos de avaliações.
 
 ```{r}
 max_aang = aang %>% 
@@ -121,7 +109,8 @@ amplitude_aang = rbind(min_aang, max_aang)
 ggplot(amplitude_aang, aes(x = season, y = votes, fill = label, label = ep)) +
   geom_col(position = "dodge", color = "black", inherit.aes = TRUE) +
   geom_text(nudge_x = 0.045, nudge_y= 100) +
-  scale_fill_manual(values = c("coral", "steelblue"))
+  scale_fill_manual(values = c("coral", "steelblue")) +
+  ggtitle(aang$series_name)
 ```
 
 
@@ -146,7 +135,8 @@ amplitude_korra = rbind(min_korra, max_korra)
 ggplot(amplitude_korra, aes(x = season, y = votes, fill = label, label = ep)) +
   geom_col(position = "dodge", color = "black", inherit.aes = TRUE) +
   geom_text(nudge_x = 0.1, nudge_y= 70) +
-  scale_fill_manual(values = c("black", "steelblue"))
+  scale_fill_manual(values = c("black", "steelblue")) +
+  ggtitle(korra$series_name)
 ```
 
 ## Existem alguma correlação entre as avaliações da primeira e última temporada de cada séries?
@@ -164,13 +154,16 @@ ultima_aang = aang %>%
 ```{r}
 primeira_aang %>% 
     ggplot(aes(x = UserRating, y = ultima_aang$UserRating)) +
-    geom_point( color = "steelblue")
+    geom_point( color = "steelblue") +
+  ggtitle(aang$series_name)
 ```
 
 ```{r}
 primeira_aang %>% 
     summarise(correlacao = cor(UserRating, ultima_aang$UserRating, method = "pearson"))
 ```
+
+Analisando a visualização e a correlação encontrada em A lenda de Aang podemos concluir que as avaliações da primeira temporada e da última possuem uma correlação linear e positiva, mas muito fraca, a influência que uma variável tem na outra é muito pouca.
 
 ```{r}
 primeira_korra = korra %>% 
@@ -184,10 +177,13 @@ ultima_korra = korra %>%
 ```{r}
 primeira_korra %>% 
     ggplot(aes(x = UserRating, y = ultima_korra$UserRating)) +
-    geom_point( color = "steelblue")
+    geom_point( color = "steelblue") +
+    ggtitle(korra$series_name)
 ```
 
 ```{r}
 primeira_korra %>% 
     summarise(correlacao = cor(UserRating, ultima_korra$UserRating, method = "pearson"))
 ```
+
+Já em A lenda Korra a correlação também é linear e positiva, mas diferentemente da anterior, é uma relação muito forte, onde as variáveis crescem juntas.
