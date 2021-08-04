@@ -1,5 +1,5 @@
 ---
-title: "EDA Stranger Things"
+title: "Comparação entre Avatar: A Lenda de Aang e Avatar: A Lenda de Korra"
 output:
   html_notebook:
     toc: yes
@@ -17,18 +17,28 @@ theme_set(theme_bw())
 ```
 
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 all_series = read_csv(here("data/series_from_imdb.csv.zip"), 
-                      col_types = "ccdcdcdddddddddddd")
+                      col_types = "ccdcdcdddddddddddd") 
+```
+# Comparação entre Avatar: A Lenda de Aang e Avatar: A Lenda de Korra
 
+Avatar é uma franquia de séries, suja primeira série conta a história do avatar Aang e a segunda conta a história da sua sucessora, avatar Korra. 
+
+Utilizando os dados das avaliações dadas no IMDB analisaremos algumas características dessas duas séries.
+
+```{r warning=FALSE, message=FALSE}
 aang = all_series %>% 
     filter(series_name == "Avatar: A Lenda de Aang", season > 0)
 
+```{r warning=FALSE, message=FALSE}
 korra = all_series %>% 
     filter(series_name == "Avatar: A Lenda de Korra")
 ```
 
-## A lenda De Aang foi melhor avaliada que A lenda de Korra?
+## A lenda De Aang foi melhor avaliada que a lenda de Korra?
+
+Utilizando a variável UserRating, que é uma média ponderada das avaliações, dadas de 1 a 10, comparamos as duas séries
 
 ```{r}
 aang %>% 
@@ -48,20 +58,26 @@ korra %>%
 
 A partir das visualizações acima parece que A lenda de Aang possui uma variação maior de notas ao longo das temporadas. Já A lenda de Korra tende a manter ao longo das temporadas.
 
-```{r}
+
+OS gráficos acima mostram a distribuição das média das avaliações em relação aos episodios de cada temporada. Com a Lenda de Aang percebemos uma variação maior dos valores, mas sem números muitos baixos. Jã com a Lenda de Korra temos menos variação, com um comportamento quase constante, mas temos no meio da quarta temporada um episodio com média muito menor que os outros. Outra característica que podemos observar é que os últimos episodios da Lenda de Aang sempre tem uma média maior que os demais e isso não é observado com a Lenda de Korra, onde por exemplo, no meio da segunda temporada temos um aumento nas médias em relação ao restante da temporada.
+
+```{r warning=FALSE, message=FALSE}
 media_aang = aang %>% 
   group_by(season) %>% 
   summarise(media = mean(UserRating)) %>% 
   mutate(serie = "A Lenda de Aang")
 
+```{r warning=FALSE, message=FALSE}
 media_korra = korra %>% 
   group_by(season) %>% 
   summarise(media = mean(UserRating)) %>% 
   mutate(serie = "A Lenda de Korra")
 
+```{r warning=FALSE, message=FALSE}
 medias = rbind(media_aang, media_korra)
 ```
 
+Calculando a média da variável UserRating para cada temporada das séries, temos o seguinte:
 ```{r}
 ggplot(medias, aes(x = season, y = media, fill = serie)) +
   geom_col(position = "dodge", color = "black") +
@@ -78,9 +94,15 @@ aang %>%
   geom_line() +
   ggtitle(aang$series_name)
 ```
+Em relação a média do UserRating e cada episódio, as duas séries foram avaliadas de forma bem semelhantes. Na primeira temporada a séries melhor avaliada foi a Lenda de Korra, já na segunda foi a Lenda de Aaang. E na terceira ambas estão com médias bem próximas, praticamente iguais. Ou seja, no geral as duas séries foram avaliadas da mesma forma.
 
+## Qual temporada foi mais avaliada de cada série?
+
+Agora utilizando o número de votos dados para cada episódio, que seria a variável UserVotes, temos o seguinte:
+
+### Avatar: A Lenda de Aang
 ```{r}
-korra %>% 
+aang %>% 
   ggplot(aes(x = series_ep, y = UserVotes, color = season)) +
   geom_line() +
   ggtitle(korra$series_name)
@@ -88,7 +110,7 @@ korra %>%
 
 Analisando a visualização de A lenda de Aang podemos notar que as temporadas tendem a manter uma constância no número de avaliações, tendo um grande pico no final da última temporada. Já em A lenda de Korra podemos notar que durante as temporadas há vários picos de avaliações.
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 max_aang = aang %>% 
   group_by(season) %>% 
   summarise(votes = max(UserVotes),
@@ -113,8 +135,15 @@ ggplot(amplitude_aang, aes(x = season, y = votes, fill = label, label = ep)) +
   ggtitle(aang$series_name)
 ```
 
+### Avatar: A Lenda de Korra
 
 ```{r}
+korra %>% 
+  ggplot(aes(x = series_ep, y = UserVotes, color = season)) +
+  geom_line()
+```
+
+```{r warning=FALSE, message=FALSE}
 max_korra = korra %>% 
   group_by(season) %>% 
   summarise(votes = max(UserVotes),
@@ -142,7 +171,7 @@ ggplot(amplitude_korra, aes(x = season, y = votes, fill = label, label = ep)) +
 ## Existem alguma correlação entre as avaliações da primeira e última temporada de cada séries?
 
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 primeira_aang = aang %>% 
   filter(season == 1)
 
@@ -165,7 +194,7 @@ primeira_aang %>%
 
 Analisando a visualização e a correlação encontrada em A lenda de Aang podemos concluir que as avaliações da primeira temporada e da última possuem uma correlação linear e positiva, mas muito fraca, a influência que uma variável tem na outra é muito pouca.
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 primeira_korra = korra %>% 
   filter(season == 1)
 
