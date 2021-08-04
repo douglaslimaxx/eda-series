@@ -1,16 +1,17 @@
 ---
 title: "Comparação entre Avatar: A Lenda de Aang e Avatar: A Lenda de Korra"
+author: "Douglas de Lima e Rayla Medeiros"
 output:
-  html_notebook:
-    toc: yes
-    toc_float: yes
   html_document:
     df_print: paged
     toc: yes
     toc_float: yes
+  html_notebook:
+    toc: yes
+    toc_float: yes
 ---
 
-```{r setup, echo=FALSE, warning=FALSE, message=FALSE}
+```{r setup, echo=FALSE, warning=FALSE, message=FALSE, }
 library(tidyverse)
 library(here)
 theme_set(theme_bw())
@@ -23,7 +24,7 @@ all_series = read_csv(here("data/series_from_imdb.csv.zip"),
 
 # Comparação entre Avatar: A Lenda de Aang e Avatar: A Lenda de Korra
 
-Avatar é uma franquia de séries, suja primeira série conta a história do avatar Aang e a segunda conta a história da sua sucessora, avatar Korra.
+Avatar é uma franquia de séries, cuja primeira série conta a história do avatar Aang e a segunda conta a história da sua sucessora, avatar Korra.
 
 Utilizando os dados das avaliações dadas no IMDB analisaremos algumas características dessas duas séries.
 
@@ -55,7 +56,7 @@ korra %>%
   ggtitle(korra$series_name)
 ```
 
-OS gráficos acima mostram a distribuição das média das avaliações em relação aos episodios de cada temporada. Com a Lenda de Aang percebemos uma variação maior dos valores, mas sem números muitos baixos. Jã com a Lenda de Korra temos menos variação, com um comportamento quase constante, mas temos no meio da quarta temporada um episódio com média muito menor que os outros. Outra característica que podemos observar é que os últimos episodios da Lenda de Aang sempre tem uma média maior que os demais e isso não é observado com a Lenda de Korra, onde por exemplo, no meio da segunda temporada temos um aumento nas médias em relação ao restante da temporada.
+Os gráficos acima mostram a distribuição das média das avaliações em relação aos episodios de cada temporada. Com a Lenda de Aang percebemos uma variação maior dos valores, mas sem números muitos baixos. Já com a Lenda de Korra temos menos variação, com um comportamento quase constante, mas temos no meio da quarta temporada um episódio com média muito menor que os outros. Outra característica que podemos observar é que os últimos episódios da Lenda de Aang sempre tem uma média maior que os demais e isso não é observado com a Lenda de Korra, onde por exemplo, no meio da segunda temporada temos um aumento nas médias em relação ao restante da temporada.
 
 ```{r warning=FALSE, message=FALSE}
 media_aang = aang %>% 
@@ -79,7 +80,7 @@ ggplot(medias, aes(x = season, y = media, fill = serie)) +
   scale_fill_manual(values = c("coral", "steelblue"))
 ```
 
-Com esta visualização podemos ver que apesar das diferenças de variações nas notas de cada série, elas possuem uma média de notas bem parecida. Na primeira temporada a séries melhor avaliada foi a Lenda de Korra, já na segunda foi a Lenda de Aaang. E na terceira a média das duas séries é a mesma. Ou seja, no geral as duas séries foram avaliadas da mesma forma.
+Com esta visualização podemos ver que apesar das diferenças de variações nas notas de cada série, elas possuem uma média de notas bem parecida. Na primeira temporada a séries melhor avaliada foi a Lenda de Korra, já na segunda foi a Lenda de Aang. E na terceira a média das duas séries é a mesma. Ou seja, no geral as duas séries foram avaliadas da mesma forma.
 
 ## Qual temporada foi mais avaliada de cada série?
 
